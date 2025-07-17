@@ -1,11 +1,14 @@
-
-
+import re
 
 from yandex_cloud_ml_sdk import YCloudML
 import pandas as pd
 import json
 from dotenv import load_dotenv
 import  os
+import requests
+import Anal
+
+
 
 load_dotenv()
 
@@ -49,6 +52,7 @@ system_message = {
         Желаемый продукт или результат
             Результат конкретен, измерим и полезен для благополучателей.
             Достижим в рамках проекта одним обучающимся (без нереалистичных масштабов).
+        Не нужно ругать за сильно подробные объяснения.
     """
 }
 
@@ -59,23 +63,29 @@ sdk = YCloudML(
 )
 
 
-for row_dict in df.head(2).to_dict(orient='records'):
+def clean_json_string(response_text):
+    cleaned_text = re.sub(r'^```[\s\S]*?\n([\s\S]*?)\n```$', r'\1', response_text, flags=re.MULTILINE)
+    cleaned_text = cleaned_text.strip()
+    return cleaned_text
 
+
+
+responses_list = []
+
+for row_dict in df.head(5).to_dict(orient='records'):
     json_str = json.dumps([row_dict])
-
 
     user_message = {
         "role": "user",
         "text": json_str
     }
-
-
     messages = [system_message, user_message]
-
 
     result = sdk.models.completions("yandexgpt").configure(temperature=0.5).run(messages)
 
-
     for alternative in result:
-        print(alternative)
+        json_text = clean_json_string(alternative.text)
+        print(json_text)
+        responses_list.append(json_text)
 
+Anal.generate_graphs(responses_list)
