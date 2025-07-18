@@ -15,7 +15,7 @@ YANDEX_USER = os.getenv("YANDEX_USER")
 FOLDER_ID = os.getenv("FOLDER_ID")
 
 
-csv_file_path = 'FalseTable.csv'
+csv_file_path = 'TrueTable.csv'
 df = pd.read_csv(csv_file_path, sep=';', encoding='utf-8')
 
 
