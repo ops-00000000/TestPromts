@@ -4,27 +4,20 @@ from yandex_cloud_ml_sdk import YCloudML
 import pandas as pd
 import json
 from dotenv import load_dotenv
-import  os
+import os
 import Anal
-
-
 
 load_dotenv()
 
 YANDEX_USER = os.getenv("YANDEX_USER")
 FOLDER_ID = os.getenv("FOLDER_ID")
 
-
 csv_file_path = 'FalseTable.csv'
 df = pd.read_csv(csv_file_path, sep=';', encoding='utf-8')
-
 
 columns_to_drop = ['Статус', 'Дата изменения', 'Полное название организации',
                    'Выберите направление социальной задачи ( До 3х напрвлений)']
 df = df.drop(columns=columns_to_drop)
-
-
-
 
 system_message = {
     "role": "system",
@@ -52,17 +45,16 @@ system_message = {
             Результат конкретен, измерим и полезен для благополучателей.
             Достижим в рамках проекта одним обучающимся (без нереалистичных масштабов).
             Может быть большим по объему.
-            
+
     Помни, что твоя задача отмодерировать заявки(поставить везде True), при выполнении критериев.
 
-        
+
     """
 }
 
-
 sdk = YCloudML(
-    folder_id= FOLDER_ID,
-    auth= YANDEX_USER,
+    folder_id=FOLDER_ID,
+    auth=YANDEX_USER,
 )
 
 
@@ -70,7 +62,6 @@ def clean_json_string(response_text):
     cleaned_text = re.sub(r'^```[\s\S]*?\n([\s\S]*?)\n```$', r'\1', response_text, flags=re.MULTILINE)
     cleaned_text = cleaned_text.strip()
     return cleaned_text
-
 
 
 responses_list = []
